@@ -1,0 +1,3 @@
+/Users/tomaspetricek/Programming/Languages/Cpp/projects/compare-error-handling/cmake-build-debug/CMakeFiles/compare_error_handling.dir
+/Users/tomaspetricek/Programming/Languages/Cpp/projects/compare-error-handling/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/tomaspetricek/Programming/Languages/Cpp/projects/compare-error-handling/cmake-build-debug/CMakeFiles/rebuild_cache.dir
