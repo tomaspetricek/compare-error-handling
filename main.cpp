@@ -61,9 +61,9 @@ typename ErrorHandler::return_type find_max(const std::vector<int>& nums, const 
     return max;
 }
 
-void print_max(std::size_t index)
+void print_max(int max)
 {
-    std::cout << "max is: " << index << "\n";
+    std::cout << "max is: " << max << "\n";
 }
 
 void print_error_message(const std::string& msg)
