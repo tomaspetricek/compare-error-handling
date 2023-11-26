@@ -6,14 +6,14 @@
 #include <filesystem>
 #include <fstream>
 
-template<std::size_t Size, class Errors> requires std::is_enum_v<Errors>
+template<class Errors> requires std::is_enum_v<Errors>
 class error_handler {
-    std::array<std::string, Size> messages_;
+    std::array<std::string, Errors::count> messages_;
 
 public:
     using error_type = Errors;
 
-    explicit error_handler(std::array<std::string, Size> messages)
+    explicit error_handler(std::array<std::string, Errors::count> messages)
             :messages_{std::move(messages)} { }
 
     [[nodiscard]] const std::string& message(const Errors& error) const
@@ -22,12 +22,13 @@ public:
     }
 };
 
-template<class Value, std::size_t Size, class Errors>
-struct exception_handler : public error_handler<Size, Errors> {
+template<class Value, class Errors>
+struct exception_handler : public error_handler<Errors> {
     using return_type = Value;
+    using value_type = Value;
 
-    explicit exception_handler(const std::array<std::string, Size>& messages)
-            :error_handler<Size, Errors>{messages} { }
+    explicit exception_handler(const std::array<std::string, Errors::count>& messages)
+            :error_handler<Errors>{messages} { }
 
     return_type operator()(const Errors& error)
     {
@@ -35,12 +36,13 @@ struct exception_handler : public error_handler<Size, Errors> {
     }
 };
 
-template<class Value, std::size_t Size, class Errors>
-struct expected_handler : public error_handler<Size, Errors> {
+template<class Value, class Errors>
+struct expected_handler : public error_handler<Errors> {
     using return_type = std::expected<Value, Errors>;
+    using value_type = Value;
 
-    explicit expected_handler(const std::array<std::string, Size>& messages)
-            :error_handler<Size, Errors>{messages} { }
+    explicit expected_handler(const std::array<std::string, Errors::count>& messages)
+            :error_handler<Errors>{messages} { }
 
     return_type operator()(const Errors& error)
     {
@@ -120,9 +122,8 @@ void use_exceptions(const std::vector<int>& nums, ExceptionHandler& handler)
 void compare_error_handling()
 {
     // error messages
-    constexpr std::size_t error_count{1};
-    enum class search_error { is_empty };
-    std::array<std::string, error_count>messages{"is empty"};
+    enum search_error : std::size_t { is_empty, count };
+    std::array<std::string, search_error::count>messages{"is empty"};
 
     // samples
     using value_t = int;
@@ -136,8 +137,8 @@ void compare_error_handling()
     std::ofstream log_file{log_path};
 
     // handlers
-    expected_handler<value_t, error_count, search_error> expected_handler{messages};
-    exception_handler<value_t, error_count, search_error> exception_handler{messages};
+    expected_handler<value_t, search_error> expected_handler{messages};
+    exception_handler<value_t, search_error> exception_handler{messages};
     logging_error_handler logging_handler{std::move(log_file), expected_handler};
 
     // use handlers
