@@ -3,13 +3,8 @@
 #include <utility>
 #include <vector>
 #include <array>
-#include <utility>
 #include <filesystem>
 #include <fstream>
-
-enum class search_error {
-    is_empty
-};
 
 template<std::size_t Size, class Errors> requires std::is_enum_v<Errors>
 class error_handler {
@@ -81,7 +76,7 @@ template<class ErrorHandler>
 typename ErrorHandler::return_type find_max(const std::vector<int>& nums, ErrorHandler& error_handler)
 {
     if (nums.empty()) {
-        return error_handler(search_error::is_empty);
+        return error_handler(ErrorHandler::error_type::is_empty);
     }
     int max{nums[0]};
     for (std::size_t i{1}; i<nums.size(); i++) {
@@ -126,6 +121,7 @@ void compare_error_handling()
 {
     // error messages
     constexpr std::size_t error_count{1};
+    enum class search_error { is_empty };
     std::array<std::string, error_count>messages{"is empty"};
 
     // samples
